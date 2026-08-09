@@ -1,0 +1,6 @@
+reproduced_figures/
+*.asv
+*.m~
+*.autosave
+.DS_Store
+Thumbs.db
