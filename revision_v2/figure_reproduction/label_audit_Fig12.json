@@ -1,0 +1,34 @@
+[
+  {
+    "panel": "a",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "b",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "c",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "d",
+    "position": [
+      0.98,
+      0.035
+    ],
+    "overlap_score": 0
+  }
+]

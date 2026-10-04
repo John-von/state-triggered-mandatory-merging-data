@@ -1,0 +1,56 @@
+[
+  {
+    "panel": "a",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "b",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "c",
+    "position": [
+      0.02,
+      0.3
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "d",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "e",
+    "position": [
+      0.018,
+      0.975
+    ],
+    "overlap_score": 0
+  },
+  {
+    "panel": "f",
+    "heatmap_extent": [
+      -0.5,
+      5.5,
+      2.5,
+      -0.5
+    ],
+    "ylim": [
+      2.5,
+      -0.5
+    ],
+    "label_text_overlap": false
+  }
+]

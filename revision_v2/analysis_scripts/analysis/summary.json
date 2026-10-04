@@ -1,0 +1,572 @@
+{
+  "factorial": [
+    {
+      "density": 25.0,
+      "spacing": 40,
+      "COOP": {
+        "fuel": 7.75698517,
+        "speed": 17.610370300000003,
+        "arms": 0.5742323545,
+        "sigma": 7.090111930000001,
+        "stop": 353.90500000000003,
+        "totalfuel": 4.665407525000001
+      },
+      "trigger_only": {
+        "fuel": 7.380537460324293,
+        "speed": 17.924383014645294,
+        "arms": 0.4417762192547744,
+        "sigma": 6.934382495967273,
+        "stop": 308.46,
+        "totalfuel": 4.518364809987122
+      },
+      "config_only": {
+        "fuel": 7.70018683347139,
+        "speed": 17.719112220224595,
+        "arms": 0.5603816277414516,
+        "sigma": 7.08636212044461,
+        "stop": 342.18,
+        "totalfuel": 4.660204249317425
+      },
+      "ECO": {
+        "fuel": 7.38373139669635,
+        "speed": 17.907950402749815,
+        "arms": 0.44457359543825586,
+        "sigma": 6.936683139389446,
+        "stop": 304.13500000000005,
+        "totalfuel": 4.516352408877357
+      },
+      "fuel_trigger_with_coop": {
+        "mean": 4.846974839519352,
+        "ci_low": 4.491834591520085,
+        "ci_high": 5.202115087518619
+      },
+      "fuel_trigger_with_eco": {
+        "mean": 4.105455657489527,
+        "ci_low": 3.807328601818202,
+        "ci_high": 4.403582713160852
+      },
+      "fuel_config_without_trigger": {
+        "mean": 0.7299079499371381,
+        "ci_low": 0.4824273168696152,
+        "ci_high": 0.9773885830046611
+      },
+      "fuel_config_with_trigger": {
+        "mean": -0.04327899083764754,
+        "ci_low": -0.04818598960776601,
+        "ci_high": -0.038371992067529066
+      },
+      "speed_trigger_with_coop": {
+        "mean": 1.785069507557975,
+        "ci_low": 1.5417673586183476,
+        "ci_high": 2.0283716564976024
+      },
+      "speed_trigger_with_eco": {
+        "mean": 1.066408111167863,
+        "ci_low": 0.9063065240524079,
+        "ci_high": 1.226509698283318
+      },
+      "speed_config_without_trigger": {
+        "mean": 0.6187988968936371,
+        "ci_low": 0.4308854385607085,
+        "ci_high": 0.8067123552265657
+      },
+      "speed_config_with_trigger": {
+        "mean": -0.09168690593751117,
+        "ci_low": -0.1011657473048674,
+        "ci_high": -0.08220806457015493
+      },
+      "arms_trigger_with_coop": {
+        "mean": 23.022385185197617,
+        "ci_low": 22.113952034336673,
+        "ci_high": 23.93081833605856
+      },
+      "arms_trigger_with_eco": {
+        "mean": 20.636343327925836,
+        "ci_low": 19.877891600236254,
+        "ci_high": 21.39479505561542
+      },
+      "arms_config_without_trigger": {
+        "mean": 2.3958848289440935,
+        "ci_low": 1.8519561693587034,
+        "ci_high": 2.9398134885294835
+      },
+      "arms_config_with_trigger": {
+        "mean": -0.6332022732970787,
+        "ci_low": -0.6383436967878702,
+        "ci_high": -0.6280608498062872
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.00000000350451,
+      "violations": 0.0
+    },
+    {
+      "density": 35.714285714285715,
+      "spacing": 28,
+      "COOP": {
+        "fuel": 8.26993198,
+        "speed": 16.8883099,
+        "arms": 0.6669563889999999,
+        "sigma": 6.6902691899999995,
+        "stop": 303.27,
+        "totalfuel": 4.7692584799999995
+      },
+      "trigger_only": {
+        "fuel": 8.269931991208493,
+        "speed": 16.8883099977973,
+        "arms": 0.6669563894188226,
+        "sigma": 6.690269187777133,
+        "stop": 303.27,
+        "totalfuel": 4.7692584912622165
+      },
+      "config_only": {
+        "fuel": 8.189930948376958,
+        "speed": 17.078176086549888,
+        "arms": 0.6612562889224933,
+        "sigma": 6.553570797888685,
+        "stop": 279.38499999999993,
+        "totalfuel": 4.776874173061259
+      },
+      "ECO": {
+        "fuel": 8.189930948376958,
+        "speed": 17.078176086549888,
+        "arms": 0.6612562889224933,
+        "sigma": 6.553570797888685,
+        "stop": 279.38499999999993,
+        "totalfuel": 4.776874173061259
+      },
+      "fuel_trigger_with_coop": {
+        "mean": -1.3611423456759516e-07,
+        "ci_low": -3.2093823991538404e-07,
+        "ci_high": 4.870977078019369e-08
+      },
+      "fuel_trigger_with_eco": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "fuel_config_without_trigger": {
+        "mean": 0.9588134133571327,
+        "ci_low": 0.4651949587486213,
+        "ci_high": 1.452431867965644
+      },
+      "fuel_config_with_trigger": {
+        "mean": 0.9588135489345639,
+        "ci_low": 0.46519513127574946,
+        "ci_high": 1.4524319665933785
+      },
+      "speed_trigger_with_coop": {
+        "mean": 5.771917613554299e-07,
+        "ci_low": -1.5924595347492887e-07,
+        "ci_high": 1.3136294761857886e-06
+      },
+      "speed_trigger_with_eco": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "speed_config_without_trigger": {
+        "mean": 1.13064986060713,
+        "ci_low": 0.7025630329231606,
+        "ci_high": 1.5587366882910993
+      },
+      "speed_config_with_trigger": {
+        "mean": 1.130649276911195,
+        "ci_low": 0.7025624486796285,
+        "ci_high": 1.5587361051427617
+      },
+      "arms_trigger_with_coop": {
+        "mean": -6.013733870865397e-08,
+        "ci_low": -2.8078537758498597e-07,
+        "ci_high": 1.6051070016767806e-07
+      },
+      "arms_trigger_with_eco": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "arms_config_without_trigger": {
+        "mean": 0.8365970176011708,
+        "ci_low": -0.0290517323601992,
+        "ci_high": 1.7022457675625406
+      },
+      "arms_config_with_trigger": {
+        "mean": 0.8365970758702137,
+        "ci_low": -0.02905170832090931,
+        "ci_high": 1.7022458600613368
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.00000000117689,
+      "violations": 0.0
+    },
+    {
+      "density": 50.0,
+      "spacing": 20,
+      "COOP": {
+        "fuel": 8.936488885,
+        "speed": 16.1329834,
+        "arms": 0.8478814465000001,
+        "sigma": 6.8454298,
+        "stop": 238.115,
+        "totalfuel": 4.9230613199999995
+      },
+      "trigger_only": {
+        "fuel": 8.936488884942138,
+        "speed": 16.132983374486937,
+        "arms": 0.8478814465974492,
+        "sigma": 6.84542980432025,
+        "stop": 238.115,
+        "totalfuel": 4.923061314277492
+      },
+      "config_only": {
+        "fuel": 8.759841291375663,
+        "speed": 16.31387901645267,
+        "arms": 0.8307234956932973,
+        "sigma": 6.703986444887406,
+        "stop": 229.79500000000002,
+        "totalfuel": 4.8805504579516255
+      },
+      "ECO": {
+        "fuel": 8.759841291375663,
+        "speed": 16.31387901645267,
+        "arms": 0.8307234956932973,
+        "sigma": 6.703986444887406,
+        "stop": 229.79500000000002,
+        "totalfuel": 4.8805504579516255
+      },
+      "fuel_trigger_with_coop": {
+        "mean": 1.1757424723969456e-09,
+        "ci_low": -1.5400465417120804e-07,
+        "ci_high": 1.5635613911600193e-07
+      },
+      "fuel_trigger_with_eco": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "fuel_config_without_trigger": {
+        "mean": 1.9711712477503482,
+        "ci_low": 1.6482553920692522,
+        "ci_high": 2.294087103431444
+      },
+      "fuel_config_with_trigger": {
+        "mean": 1.9711712463229734,
+        "ci_low": 1.6482553712944688,
+        "ci_high": 2.294087121351478
+      },
+      "speed_trigger_with_coop": {
+        "mean": -1.591658937540636e-07,
+        "ci_low": -9.563927949198555e-07,
+        "ci_high": 6.380610074117284e-07
+      },
+      "speed_trigger_with_eco": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "speed_config_without_trigger": {
+        "mean": 1.128508534056647,
+        "ci_low": 0.7664282314180978,
+        "ci_high": 1.490588836695196
+      },
+      "speed_config_with_trigger": {
+        "mean": 1.1285086952471768,
+        "ci_low": 0.7664283760555952,
+        "ci_high": 1.4905890144387584
+      },
+      "arms_trigger_with_coop": {
+        "mean": -1.1031806948865516e-08,
+        "ci_low": -1.6927732761207126e-07,
+        "ci_high": 1.472137137143402e-07
+      },
+      "arms_trigger_with_eco": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "arms_config_without_trigger": {
+        "mean": 2.020911410076831,
+        "ci_low": 1.8103113800561812,
+        "ci_high": 2.231511440097481
+      },
+      "arms_config_with_trigger": {
+        "mean": 2.0209114207909673,
+        "ci_low": 1.8103113807074918,
+        "ci_high": 2.231511460874443
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.0000000725031,
+      "violations": 0.0
+    }
+  ],
+  "thresholds": [
+    {
+      "density": 50.0,
+      "spacing": 20.0,
+      "variant": 130.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.1000002286479,
+      "violations": 0.0,
+      "speed": 16.31387901645267
+    },
+    {
+      "density": 50.0,
+      "spacing": 20.0,
+      "variant": 140.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.1000002286479,
+      "violations": 0.0,
+      "speed": 16.31387901645267
+    },
+    {
+      "density": 50.0,
+      "spacing": 20.0,
+      "variant": 145.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.1000002286479,
+      "violations": 0.0,
+      "speed": 16.31387901645267
+    },
+    {
+      "density": 41.666666666666664,
+      "spacing": 24.0,
+      "variant": 1250.0,
+      "fuel_change_pct": {
+        "mean": -0.07605946425758991,
+        "ci_low": -0.09713915302494806,
+        "ci_high": -0.054979775490231766
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000001843628,
+      "violations": 0.0,
+      "speed": 16.732330976710106
+    },
+    {
+      "density": 41.666666666666664,
+      "spacing": 24.0,
+      "variant": 1550.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000001819549,
+      "violations": 0.0,
+      "speed": 16.73235668263251
+    },
+    {
+      "density": 41.666666666666664,
+      "spacing": 24.0,
+      "variant": 2015.0,
+      "fuel_change_pct": {
+        "mean": 0.7984658917761981,
+        "ci_low": 0.6076401359405867,
+        "ci_high": 0.9892916476118094
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000001275785,
+      "violations": 0.0,
+      "speed": 16.671811795923578
+    },
+    {
+      "density": 41.666666666666664,
+      "spacing": 24.0,
+      "variant": 2040.0,
+      "fuel_change_pct": {
+        "mean": -0.2821164254848936,
+        "ci_low": -0.370753891943139,
+        "ci_high": -0.19347895902664813
+      },
+      "completion_min": 100.0,
+      "min_gap": 1.35990146166057,
+      "violations": 0.0,
+      "speed": 16.78760829556304
+    },
+    {
+      "density": 35.714285714285715,
+      "spacing": 28.0,
+      "variant": 130.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.09385862534941,
+      "violations": 0.0,
+      "speed": 17.078176086549888
+    },
+    {
+      "density": 35.714285714285715,
+      "spacing": 28.0,
+      "variant": 140.0,
+      "fuel_change_pct": {
+        "mean": -3.757984901894332,
+        "ci_low": -4.395909534714445,
+        "ci_high": -3.12006026907422
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000022949771,
+      "violations": 0.0,
+      "speed": 17.364929699011093
+    },
+    {
+      "density": 35.714285714285715,
+      "spacing": 28.0,
+      "variant": 145.0,
+      "fuel_change_pct": {
+        "mean": -3.757984901894332,
+        "ci_low": -4.395909534714445,
+        "ci_high": -3.12006026907422
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000022949771,
+      "violations": 0.0,
+      "speed": 17.364929699011093
+    },
+    {
+      "density": 25.0,
+      "spacing": 40.0,
+      "variant": 130.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000000325601,
+      "violations": 0.0,
+      "speed": 17.907950402749815
+    },
+    {
+      "density": 25.0,
+      "spacing": 40.0,
+      "variant": 140.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000000325601,
+      "violations": 0.0,
+      "speed": 17.907950402749815
+    },
+    {
+      "density": 25.0,
+      "spacing": 40.0,
+      "variant": 145.0,
+      "fuel_change_pct": {
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      "completion_min": 100.0,
+      "min_gap": 2.10000000325601,
+      "violations": 0.0,
+      "speed": 17.907950402749815
+    }
+  ],
+  "new_runs": 380,
+  "completion_min": 100.0,
+  "violations": 0.0,
+  "min_gap": 1.35990146166057,
+  "runtime": [
+    {
+      "vehicles": 38.0,
+      "mode": 1.0,
+      "steps": 2700,
+      "mean_ms": 8.883653740740739,
+      "p95_ms": 26.492454999999985,
+      "maximum_ms": 41.1137,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 38.0,
+      "mode": 2.0,
+      "steps": 2700,
+      "mean_ms": 7.566963,
+      "p95_ms": 23.859344999999994,
+      "maximum_ms": 39.3457,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 38.0,
+      "mode": 3.0,
+      "steps": 2700,
+      "mean_ms": 3.9848270370370367,
+      "p95_ms": 6.737959999999992,
+      "maximum_ms": 11.7239,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 57.0,
+      "mode": 1.0,
+      "steps": 2700,
+      "mean_ms": 13.508522407407408,
+      "p95_ms": 34.801829999999995,
+      "maximum_ms": 70.4775,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 57.0,
+      "mode": 2.0,
+      "steps": 2700,
+      "mean_ms": 12.306221000000003,
+      "p95_ms": 31.205739999999984,
+      "maximum_ms": 52.4897,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 57.0,
+      "mode": 3.0,
+      "steps": 2700,
+      "mean_ms": 7.8702803333333335,
+      "p95_ms": 11.336284999999998,
+      "maximum_ms": 18.9954,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 76.0,
+      "mode": 1.0,
+      "steps": 2700,
+      "mean_ms": 19.451808555555555,
+      "p95_ms": 46.31626,
+      "maximum_ms": 76.5209,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 76.0,
+      "mode": 2.0,
+      "steps": 2700,
+      "mean_ms": 18.26932214814815,
+      "p95_ms": 43.412254999999995,
+      "maximum_ms": 59.7827,
+      "steps_over_100ms": 0
+    },
+    {
+      "vehicles": 76.0,
+      "mode": 3.0,
+      "steps": 2700,
+      "mean_ms": 3.9300357407407405,
+      "p95_ms": 4.541554999999998,
+      "maximum_ms": 9.983,
+      "steps_over_100ms": 0
+    }
+  ]
+}

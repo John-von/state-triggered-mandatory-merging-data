@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "date": "2026-10-04",
+  "records": [
+    {
+      "file": "PLOS_ONE_Mixed_Traffic_Merging_Data/data/raw/joint_raw.csv",
+      "rows": 1000,
+      "unique_paired_seeds": true
+    },
+    {
+      "file": "PLOS_ONE_Mixed_Traffic_Merging_Data/data/raw/eco_joint_raw.csv",
+      "rows": 500,
+      "unique_paired_seeds": true
+    },
+    {
+      "file": "PLOS_ONE_Mixed_Traffic_Merging_Data/data/raw/eco_safety_ablation_raw.csv",
+      "rows": 80,
+      "unique_paired_seeds": true
+    },
+    {
+      "file": "analysis_scripts/analysis/revision_experiments.csv",
+      "rows": 380,
+      "unique_paired_seeds": true
+    },
+    {
+      "file": "round2_analysis/analysis/component_experiments.csv",
+      "rows": 120,
+      "unique_paired_seeds": true
+    },
+    {
+      "file": "round2_analysis/analysis/robustness_experiments.csv",
+      "rows": 1020,
+      "unique_paired_seeds": true
+    }
+  ],
+  "new_revision_runs": 1520,
+  "original_runs": 1580,
+  "timing_runs": 27,
+  "timing_steps": 24300,
+  "seed_0_robustness_trajectories": 51,
+  "mat_checkpoint_rows_match_csv": true,
+  "quick_matlab_reproduction": "passed with documented legacy COOP counter difference of one",
+  "public_release": "https://github.com/John-von/state-triggered-mandatory-merging-data/releases/tag/v2.0.0"
+}

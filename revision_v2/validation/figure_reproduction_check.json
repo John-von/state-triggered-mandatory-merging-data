@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-04",
+  "scripts_passed": [
+    "replot_legacy.py",
+    "replot_fig3.py",
+    "replot_original.py",
+    "replot.py"
+  ],
+  "final_png_images_identical_to_manuscript_archive": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "comparison": "byte-for-byte"
+}
