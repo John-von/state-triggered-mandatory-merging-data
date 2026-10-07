@@ -8,7 +8,7 @@ fprintf('Instrumentation baseline is bit-for-bit identical.\n');
 fprintf('Filter applications CAV %d HDV %d; mean adjustment %.3f max %.3f\n',R1.filter_cav,R1.filter_hdv,R1.filter_delta_mean,R1.filter_delta_max);
 save(fullfile(out,'instrumentation_validation.mat'),'R1');
 
-% Three densities at 75%% nominal target-lane penetration, twenty paired seeds.
+% Three densities at 75% nominal target-lane penetration, twenty paired seeds.
 % Two missing cells of a 2x2 design: COOP parameters with trigger;
 % ECO parameters without the trigger. The archived COOP and ECO are retained.
 jobs=[];

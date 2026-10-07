@@ -1,94 +1,61 @@
-# Source code and data for state-triggered cooperative mandatory merging
+# Source code and data for cooperative mandatory merging
 
-Version 2.0.0, 4 October 2026. This archive accompanies *State-triggered cooperative mandatory merging at temporary lane closures in mixed traffic flow* by Jie Yu, Tao Chen, Qiang Wen and Mingyuan Bai.
+Version 2.0.1, 7 October 2026. S1 File for *State-triggered cooperative mandatory merging at temporary lane closures in mixed traffic flow*.
 
-The identical `S1_Source_Code_and_Data.zip` is supplied as S1 File and as an asset of the [versioned public release](https://github.com/John-von/state-triggered-mandatory-merging-data/releases/tag/v2.0.0). File-level checksums are in `SHA256SUMS.txt`. The repository retains the original release history as well as browsable source code. Its entire working tree is not an identical copy of this archive.
+The identical archive is available at https://github.com/John-von/state-triggered-mandatory-merging-data/releases/tag/v2.0.1.
 
-## Contents and evidence
+## Contents
 
 | Folder | Contents |
 | --- | --- |
-| `PLOS_ONE_Mixed_Traffic_Merging_Data/data/` | Original seed-level records (1500 main runs and 80 safety-ablation runs), summaries and representative trajectories |
-| `analysis_scripts/code/` | Core simulator, parameter definitions and instrumentation |
-| `analysis_scripts/analysis/` | 380 trigger/configuration and threshold runs, 300 original-grid paired statistical comparisons, timing records and the instrumented representative run |
-| `round2_analysis/code/` | Simulator extensions for communication, sensing, driver heterogeneity, transfer and component reversions |
-| `round2_analysis/analysis/` | 1020 robustness/transfer runs, 120 component reversions, 306 paired ECO-minus-baseline contrasts, per-run MAT records and 51 representative seed-0 trajectories |
-| `figure_reproduction/` | Final plotting scripts and inputs for Figs 1 and 3–13, and the retained original Fig 2 |
-| `validation/` | Reproduction check and execution logs |
+| `PLOS_ONE_Mixed_Traffic_Merging_Data/data/` | 1500 main runs, 80 safety-ablation runs, summaries and trajectories |
+| `analysis_scripts/` | Core MATLAB simulator, 380 activation/threshold runs, 300 paired comparisons and 27 timing runs |
+| `round2_analysis/` | Extended simulator, 1020 robustness/transfer runs, 120 component reversions and 306 paired contrasts |
+| `figure_reproduction/` | Scripts for the final figures and the original Figure 2 |
 
-The revision adds 1520 controlled runs (380 + 120 + 1020). Timing is a separate set of 27 measured simulations with 900 steps each, following nine warm-up simulations. The total of 3100 main/ablation/revision records excludes timing and validation reruns. Run counts are not counts of independent traffic observations.
+The 3100 experiment records exclude timing and verification reruns. Seeds 0-19 are paired across strategies. Timing records cover 24300 measured steps after warm-up. Variable definitions are in `PLOS_ONE_Mixed_Traffic_Merging_Data/DATA_DICTIONARY.md` and the CSV headers.
 
 ## Requirements
 
-The simulation records were generated with MATLAB R2023b. The full sweep scripts use Parallel Computing Toolbox. Statistical scripts use Statistics and Machine Learning Toolbox. The core projected-FISTA solver does not require Optimization Toolbox. Python analyses and final figures require NumPy, pandas, SciPy and Matplotlib (see `requirements.txt`). Install these in your own Python environment. No bundled third-party packages are included.
+MATLAB R2023b was used for simulation. Sweep scripts require Parallel Computing Toolbox; statistical scripts require Statistics and Machine Learning Toolbox. The projected-FISTA solver does not require Optimization Toolbox. Python plotting and analysis require the packages in `requirements.txt`.
 
-## Quick verification
+## Reproduce figures and summaries
 
-Extract the complete archive and set the MATLAB current folder to its root:
-
-```matlab
-run('analysis_scripts/quick_reproduction_check.m')
-```
-
-This recomputes one paired seed for COOP, PASSIVE and ECO and checks continuous metrics against the archived CSV precision, with exact completion and violation-count checks. The 4 October 2026 check passed. The legacy COOP intervention counter is 20341 on rerun versus 20340 in the original CSV, because it counts arbitrarily small floating-point corrections. This does not change the checked performance or violation results. The discrepancy is retained in `validation/quick_check_20261004.log` and the diagnostics CSV.
-
-## Reproduce final figures and statistics
-
-Run from the archive root:
+Run from the extracted archive root:
 
 ```text
-python figure_reproduction/replot_legacy.py
-python figure_reproduction/replot_fig3.py
-python figure_reproduction/replot_original.py
-python figure_reproduction/replot.py
+python figure_reproduction/reproduce_figures.py
+python analysis_scripts/summarize_revision.py
+python round2_analysis/analyze_round2.py
 ```
 
-The scripts write to `figure_reproduction/figures/`. They reproduce Figs 1, 3–13 with the final panel labels and layout. Fig 2 is the retained original illustration, supplied in that output folder. The numerical inputs correspond to the archived experiment records. Historical plotting code in `PLOS_ONE_Mixed_Traffic_Merging_Data/scripts/` and `round2_analysis/analyze_round2.py` retains earlier graphical layouts and should not be used for the final figure appearance.
+Figures are written to `figure_reproduction/figures/`. The analysis scripts rebuild summaries from saved records. For the main-grid statistical tests, run in MATLAB:
 
 ```matlab
 run('analysis_scripts/statistics_revision.m')
 ```
 
-```text
-python analysis_scripts/summarize_revision.py
-python round2_analysis/analyze_round2.py
-```
+## Rerun simulations
 
-These commands rebuild statistical summaries from saved records. They do not rerun the simulation. Run them in a working copy if the deposited results are to remain byte-identical.
+Set the MATLAB current folder to the archive root. Use a working copy and separate MATLAB sessions for the two simulator folders, which contain functions with shared names.
 
-## Rerun simulation experiments
+| Experiment | MATLAB command |
+| --- | --- |
+| Three-strategy verification | `run('analysis_scripts/quick_reproduction_check.m')` |
+| Main grid | `run('analysis_scripts/reproduce_original_grid.m')` |
+| Safety ablation and representative trajectories | `addpath('analysis_scripts/code'); run('analysis_scripts/code/run_eco_safety_and_typical.m')` |
+| Activation, thresholds and timing | `run('analysis_scripts/run_revision.m')` |
+| Robustness and transfer | `run('round2_analysis/run_robustness.m')` |
+| Component reversions | `run('round2_analysis/run_components.m')` |
 
-Use separate fresh MATLAB sessions for each group to avoid function-name collisions between the two `code/` directories. Work on a copy of the archive.
+Sweeps resume saved checkpoints. To recompute a sweep, move its `job_*.mat`, `robust_*.mat` or `component_*.mat` files out of the working copy. Timing varies with hardware and workload. The verification script records a known one-count difference in the original COOP intervention counter, which uses a strict floating-point comparison. Performance metrics agree within the archived CSV precision.
 
-```matlab
-run('analysis_scripts/reproduce_original_grid.m')
-```
+## Record conventions
 
-This writes the original 1500-run grid to `analysis_scripts/reproduced_main/`. To regenerate the 80 safety-ablation runs and original representative trajectories:
+Original main-grid codes are 1=COOP, 2=PASSIVE and 3=ECO. Robustness and timing codes are 1=COOP, 2=ECO and 3=PASSIVE. Use the file-specific mapping. Experiment settings and checkpoint indices are listed in `round2_analysis/analysis/experiment_settings.csv`, `registered_jobs.csv` and `component_registered_jobs.csv`.
 
-```matlab
-addpath('analysis_scripts/code')
-run('analysis_scripts/code/run_eco_safety_and_typical.m')
-```
+Negative net gaps represent simulated overlap; negative-gap samples are not distinct crashes. Communication tests preserve exact discrete lane/role labels and distinguish control-only noise from noise affecting the safety layer. Raw records include unsuccessful runs. The fuel model uses a common simplified powertrain.
 
-For the revision sweeps:
+## License
 
-```matlab
-run('analysis_scripts/run_revision.m')
-run('round2_analysis/run_robustness.m')
-run('round2_analysis/run_components.m')
-```
-
-Run the first line in a separate session from the last two. The scripts resume completed per-run MAT checkpoints. To force a fresh sweep, first move the corresponding `job_*.mat`, `robust_*.mat` or `component_*.mat` checkpoint files out of the working copy's `analysis` folder. Retain the deposited archive unchanged. Representative robustness trajectories are saved for seed 0 in each of 17 conditions and three strategies. CPU timings depend on hardware and workload and are not expected to reproduce exactly.
-
-## Interpreting the records
-
-Seeds 0–19 are paired across strategies. Main runs use five initial target-lane densities and five nominal CAV penetrations. Detailed variable definitions and original strategy codes are in `PLOS_ONE_Mixed_Traffic_Merging_Data/DATA_DICTIONARY.md`. **Strategy codes differ by file:** original `joint_raw.csv` uses 1=COOP and 2=PASSIVE, while ECO is in a separate file; robustness and runtime records use 1=COOP, 2=ECO and 3=PASSIVE. Read the named columns rather than assuming a common numeric mapping.
-
-Robustness settings are in `round2_analysis/analysis/experiment_settings.csv`. `registered_jobs.csv` and `component_registered_jobs.csv` map every checkpoint to its condition and seed. Minimum net gap is a sampled longitudinal measure. A negative value denotes simulated overlap, and a count of negative-gap samples is not a count of distinct crashes. Completed merges alone do not establish safety under arbitrary conditions. The `hdv_unfiltered` condition tests removal of the modeled HDV safety override. Communication tests preserve exact discrete lane/role labels, and all-layer sensing noise is explicitly distinguished from noise restricted to nominal control.
-
-The deposit includes adverse outcomes and the lower original-grid fuel intensity of PASSIVE. It contains no road or hardware-in-the-loop measurements and no reproduced external-method benchmark. The fuel model is a simplified common powertrain model. Test parameters and outcomes should not be interpreted as a deployment certification.
-
-## License and citation
-
-Author-generated code is available under the MIT License. Data, figures and documentation are available under CC BY 4.0. Existing notices in the original data subdirectory are retained. See `LICENSE.md` and `CITATION.cff`. Mingyuan Bai contributed manuscript review and editing; the author list does not attribute software development to him.
+Author-generated code is MIT-licensed. Data, figures and documentation are CC BY 4.0. See `LICENSE.md` and `CITATION.cff`. `SHA256SUMS.txt` contains file checksums.

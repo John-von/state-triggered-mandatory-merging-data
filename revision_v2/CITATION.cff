@@ -2,10 +2,10 @@ cff-version: 1.2.0
 message: "If you use this dataset, please cite the associated article and this data release."
 title: "Source Code and Data for State-Triggered Cooperative Mandatory Merging at Temporary Lane Closures in Mixed Traffic Flow"
 type: dataset
-version: 2.0.0
-date-released: 2026-10-04
+version: 2.0.1
+date-released: 2026-10-07
 repository-code: "https://github.com/John-von/state-triggered-mandatory-merging-data"
-url: "https://github.com/John-von/state-triggered-mandatory-merging-data/releases/tag/v2.0.0"
+url: "https://github.com/John-von/state-triggered-mandatory-merging-data/releases/tag/v2.0.1"
 authors:
   - family-names: Yu
     given-names: Jie

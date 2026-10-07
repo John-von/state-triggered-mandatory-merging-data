@@ -1,4 +1,4 @@
-%% Safety ablation and representative trajectories for the ECO strategy
+% Safety ablation and representative trajectories for the ECO strategy
 clear; clc; close all;
 
 P0 = params_merge();

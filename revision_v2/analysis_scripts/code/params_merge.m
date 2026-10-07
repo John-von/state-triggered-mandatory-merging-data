@@ -1,74 +1,71 @@
 function P = params_merge()
-%PARAMS_MERGE 强制汇入/车道封闭场景全局参数（对应论文表1）
-%   继承基础 params() 的控制层与动力学参数，仅覆盖场景与安全相关项。
-%   本文件为强制汇入实验的唯一参数入口。
+%PARAMS_MERGE Lane-closure scenario and strategy parameters.
+P = params();  % Base control, dynamics and fuel parameters
 
-P = params();                 % 继承控制层/动力学/能耗参数
+% Lane-closure geometry
+P.X_drop = 750.0;  % Lane-closure coordinate (m)
+P.D_crit = 25.0;  % Critical distance to closure (m)
+P.b = 2.1;  % Lateral proximity threshold (m)
 
-% ---- 车道封闭场景几何 ----
-P.X_drop = 750.0;             % 车道0封闭点纵坐标 (m)，所有车须在此前汇入车道1
-P.D_crit = 25.0;             % 距封闭点该距离内仍未汇入则降级排队 (m)
-P.b = 2.1;                    % 横向邻近带阈值 (m)，对应论文式(6)
+% Safety settings
+P.a_emg   = -6.0;  % Modeled emergency acceleration lower bound (m/s^2)
+P.g_stop  = 1.0;  % Emergency gap threshold (m)
+P.T_lc    = 3.5;  % Lane-change duration (s)
+P.k_pred  = 1.0;  % Relative-speed prediction coefficient
+P.g_abort = 0.3;  % Early-maneuver rear-gap threshold offset (m)
+P.f_abort = 0.45;  % Early-maneuver hold window fraction
+P.g_gap_correction = 0.4;  % Optional correction gap (m)
+P.v_lc_min = 3.0;  % Minimum speed for reference progression (m/s)
+P.v_lc_dyn_min = 5.0;  % Minimum speed for dynamic lateral update (m/s)
+P.y_merge_tol = 0.10;  % Lateral completion tolerance (m)
+P.vy_merge_tol = 0.50;  % Lateral-speed completion tolerance (m/s)
+P.psi_merge_tol = 5*pi/180;  % Heading completion tolerance (rad)
+P.tau_safe = 1.30;  % Safety-filter headway (s)
+P.safety_buffer = 0.0;  % Additional gap buffer (m)
 
-% ---- 强制汇入安全层 ----
-P.a_emg   = -6.0;             % 紧急制动加速度上限 (m/s^2)，真实车辆紧急制动能力
-P.g_stop  = 1.0;             % 紧急制动触发的临界净间隙 (m)
-P.T_lc    = 3.5;             % 换道执行时长 (s)，强制汇入下缩短以减小机动期暴露
-P.k_pred  = 1.0;             % 预测性间隙判据中后车逼近速度的裕度系数
-P.g_abort = 0.3;             % 机动早期后间隙低于该值(相对静止间隙)触发中止/保持 (m)
-P.f_abort = 0.45;            % 机动前该比例时段内启用中止保护
-P.g_gap_correction = 0.4;    % 离散状态一致性校正采用的最小净间距 (m)
-P.v_lc_min = 3.0;            % 允许推进换道轨迹的最低纵向速度 (m/s)
-P.v_lc_dyn_min = 5.0;        % 启用三自由度动力学推进的最低纵向速度 (m/s)
-P.y_merge_tol = 0.10;        % 换道完成时相对目标车道中心的横向容差 (m)
-P.vy_merge_tol = 0.50;       % 换道完成时横向速度容差 (m/s)
-P.psi_merge_tol = 5*pi/180;  % 换道完成时航向角容差 (rad)
-P.tau_safe = 1.30;           % 纵向安全过滤时距，含离散推进裕度 (s)
-P.safety_buffer = 0.0;       % 常规安全滤波附加净间距缓冲 (m)
-
-% ---- 强制汇入交通状态（初始）----
-% 车道0：全部为待汇入车（拥挤汇入流）
+% Initial traffic state
+% All closing-lane vehicles must merge.
 P.n0 = 12;  P.sp0 = 26.0;  P.v0 = 16.0;   P.x0_head = 500.0;
-% 车道1：过境直行流，其密度为扫描变量
+% Target-lane density is set by the experiment script.
 P.n1 = 26;  P.sp1 = 28.0;  P.v1 = 22.0;   P.x1_head = 720.0;
 
-% ---- 仿真时长 ----
+% Simulation horizon
 P.T_end = 90.0;
 
-% ---- 协同构隙目标（强制汇入下的插入间隙）----
-P.g_open_fac = 1.0;          % 目标开隙 = g_open_fac * 2*(d0+tau_h*v)
-P.T_ramp = 12.0;             % 开隙渐进时间 (s)
+% Gap-creation reference
+P.g_open_fac = 1.0;  % Multiplier of 2*(d0+tau_h*v)
+P.T_ramp = 12.0;  % Gap-reference ramp time (s)
 
-% ---- 汇入调度 ----
-P.dt_release = 0.0;          % 汇入许可释放间隔(0=全程可汇入)
-P.N_prep = 4;                % 同时进行协同构隙的汇入车数上限(近封闭点优先)
-P.N_lc_active = 2;           % 同时执行换道的车辆数上限
+% Merge scheduling
+P.dt_release = 0.0;  % Admission interval (s), zero allows continuous admission
+P.N_prep = 4;  % Maximum simultaneous gap preparations
+P.N_lc_active = 2;  % Maximum simultaneous lane changes
 
-% ---- 可持续协同策略 ----
-P.eco_density_min = 35.0;    % 仅在目标车道达到该密度后主动构隙 (veh/km)
-P.eco_trigger_dist = 400.0;  % 距封闭点进入该范围后才启动主动构隙 (m)
-P.eco_N_prep = 3;            % 同时准备构隙的汇入车辆数
-P.eco_N_lc_active = 3;       % 同时执行换道的车辆数
-P.eco_T_ramp = 3.0;          % 单车构隙参考渐进时间 (s)
-P.eco_g_open_fac = 1.0;      % 构隙目标系数，安全许可判据仍独立生效
-P.eco_k_pred = 0.8;          % 生态策略的相对速度预测裕度系数
-P.eco_tau_gap = 1.00;        % 构隙与许可层运营时距，执行层仍用 tau_safe
-P.eco_qv = 4.0;              % 速度恢复权重
-P.eco_qa = 8.0;              % 加速度权重
-P.eco_ru = 2.0;              % 冲击度权重
-P.eco_qg = 8.0;              % 间隙误差权重
-P.eco_qr = 0.0;              % 相对速度权重
-P.eco_qc = 6.0;              % 汇入车居中权重
-P.eco_kp_gap = 0.40;         % 单车构隙比例增益
-P.eco_kd_gap = 0.90;         % 单车构隙速度差增益
-P.eco_a_min = -2.0;          % 主动构隙舒适减速度下限 (m/s^2)
-P.eco_a_max = 1.2;           % 主动构隙舒适加速度上限 (m/s^2)
-P.eco_safety_buffer = 0.10;  % 生态策略的离散执行净间距缓冲 (m)
-P.eco_hold_merge_speed = false; % 保留间隙中心协调；开关用于消融测试
+% ECO settings
+P.eco_density_min = 35.0;  % Density activation threshold (veh/km)
+P.eco_trigger_dist = 400.0;  % Activation distance from closure (m)
+P.eco_N_prep = 3;  % Maximum ECO gap preparations
+P.eco_N_lc_active = 3;  % Maximum ECO lane changes
+P.eco_T_ramp = 3.0;  % ECO gap-reference ramp time (s)
+P.eco_g_open_fac = 1.0;  % ECO gap-target multiplier
+P.eco_k_pred = 0.8;  % ECO relative-speed prediction coefficient
+P.eco_tau_gap = 1.00;  % ECO operational headway (s)
+P.eco_qv = 4.0;  % Speed-tracking weight
+P.eco_qa = 8.0;  % Acceleration weight
+P.eco_ru = 2.0;  % Jerk weight
+P.eco_qg = 8.0;  % Gap-error weight
+P.eco_qr = 0.0;  % Relative-speed weight
+P.eco_qc = 6.0;  % Gap-centering weight
+P.eco_kp_gap = 0.40;  % Gap proportional gain
+P.eco_kd_gap = 0.90;  % Relative-speed gain
+P.eco_a_min = -2.0;  % Gap-creation acceleration lower bound (m/s^2)
+P.eco_a_max = 1.2;  % Gap-creation acceleration upper bound (m/s^2)
+P.eco_safety_buffer = 0.10;  % ECO gap buffer (m)
+P.eco_hold_merge_speed = false;  % Optional speed-hold switch
 
-% ---- 论文实验开关（用于安全消融，默认均启用）----
-P.use_predictive_gap = true; % 预测性间隙判据；false 时退化为静态间隙
-P.use_abort = true;          % 机动早期中止/保持机制
-P.use_safety_filter = true;  % 控制障碍型纵向安全滤波
-P.use_gap_correction = false;% 正式方案不采用事后位置校正
+% Safety-ablation switches
+P.use_predictive_gap = true;  % Use relative-speed gap prediction
+P.use_abort = true;  % Enable early-maneuver hold
+P.use_safety_filter = true;  % Enable the barrier-based filter
+P.use_gap_correction = false;  % Post-update position correction, disabled by default
 end

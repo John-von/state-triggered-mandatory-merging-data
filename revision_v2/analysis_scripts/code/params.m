@@ -1,79 +1,76 @@
 function P = params()
-%PARAMS 多车协同换道MPC框架 全局参数（对应论文表1）
-%   本文件为唯一参数入口，论文表1的取值必须与此处一致。
+%PARAMS Base vehicle and control parameters.
+P.lane_w = 3.5;  % Lane width (m)
+P.Lc     = 5.0;  % Vehicle length (m)
+P.Wc     = 1.8;  % Vehicle width (m)
 
-% ---- 道路与车辆几何 ----
-P.lane_w = 3.5;      % 车道宽 (m)
-P.Lc     = 5.0;      % 车长 (m)
-P.Wc     = 1.8;      % 车宽 (m)
+% Vehicle dynamics
+P.m   = 1500;  % Vehicle mass (kg)
+P.Iz  = 3000;  % Yaw inertia (kg m^2)
+P.lf  = 1.2;  % Center of mass to front axle (m)
+P.lr  = 1.6;  % Center of mass to rear axle (m)
+P.Cf  = 80000;  % Front cornering stiffness (N/rad)
+P.Cr  = 80000;  % Rear cornering stiffness (N/rad)
 
-% ---- 车辆动力学（三自由度模型，论文式14）----
-P.m   = 1500;        % 整车质量 (kg)
-P.Iz  = 3000;        % 横摆转动惯量 (kg·m^2)
-P.lf  = 1.2;         % 质心至前轴 (m)
-P.lr  = 1.6;         % 质心至后轴 (m)
-P.Cf  = 80000;       % 前轮侧偏刚度 (N/rad)
-P.Cr  = 80000;       % 后轮侧偏刚度 (N/rad)
+% Motion constraints
+P.v_min = 5.0;   P.v_max = 33.0;  % Speed bounds (m/s)
+P.a_min = -2.0;  P.a_max = 2.0;  % Acceleration bounds (m/s^2)
+P.j_min = -2.0;  P.j_max = 2.0;  % Jerk bounds (m/s^3)
+P.df_max = 0.10;  % Steering-angle bound (rad)
+P.ddf_max = 0.02;  % Steering increment bound (rad/step)
 
-% ---- 运动学约束 ----
-P.v_min = 5.0;   P.v_max = 33.0;      % 速度界 (m/s)
-P.a_min = -2.0;  P.a_max = 2.0;       % 加速度界 (m/s^2)
-P.j_min = -2.0;  P.j_max = 2.0;       % 冲击度界 (m/s^3)
-P.df_max = 0.10;                       % 前轮转角界 (rad)
-P.ddf_max = 0.02;                      % 前轮转角增量界 (rad/步)
+% Gap parameters
+P.d0      = 2.0;  % Standstill gap (m)
+P.tau_h   = 1.0;  % Following headway (s)
+P.tau_acc = 1.0;  % Initial admission headway (s)
+P.tau_min = 0.5;  % Minimum admission headway (s)
+P.t_imp   = 20.0;  % Headway relaxation time (s)
 
-% ---- 安全参数（论文式11）----
-P.d0      = 2.0;     % 静止安全间隙 (m)
-P.tau_h   = 1.0;     % 跟驰安全时距 (s)
-P.tau_acc = 1.0;     % 被动换道初始间隙接受时距 (s)
-P.tau_min = 0.5;     % impatience下限时距 (s)
-P.t_imp   = 20.0;    % impatience时间常数 (s)
+% Simulation settings
+P.Ts = 0.1;  % Sampling interval (s)
+P.n_sub = 5;  % Integration substeps
+P.T_end = 120.0;  % Simulation horizon (s)
+P.t_dec = 5.0;  % Decision time (s)
 
-% ---- 仿真 ----
-P.Ts = 0.1;          % 控制/仿真步长 (s)
-P.n_sub = 5;         % 动力学积分子步数
-P.T_end = 120.0;     % 仿真时长 (s)
-P.t_dec = 5.0;       % 决策时刻 (s)
+% Gap-creation MPC
+P.Np_g = 20;  % Prediction horizon
+P.Nc_g = 6;  % Control horizon
+P.k_con = [4 8 12 16 20];  % Constrained prediction steps, one-based
+P.qv = 1.0;  % Speed-tracking weight
+P.qa = 4.0;  % Acceleration weight
+P.ru = 1.0;  % Jerk weight
+P.qg = 6.0;  % Gap-error weight
+P.qr = 3.0;  % Relative-speed weight
+P.qc = 2.0;  % Gap-centering weight
 
-% ---- 构隙层MPC（论文式9-12）----
-P.Np_g = 20;         % 预测时域
-P.Nc_g = 6;          % 控制时域
-P.k_con = [4 8 12 16 20];   % 施加约束的预测步（MATLAB 1-based）
-P.qv = 1.0;          % 速度跟踪权重
-P.qa = 4.0;          % 加速度权重
-P.ru = 1.0;          % 冲击度权重
-P.qg = 6.0;          % 间隙重构权重
-P.qr = 3.0;          % 相对速度协调权重
-P.qc = 2.0;          % 换道车对准间隙中心权重
-
-% ---- 执行层LTV-MPC（论文式16）----
+% Lane-change MPC
 P.Np_t = 12;  P.Nc_t = 4;
 P.qY = 600;  P.qpsi = 150;  P.qvx = 8;
 P.r_ax = 1.0;  P.r_df = 4e3;
 
-% ---- 换道过程 ----
-P.T_lc = 5.0;          % 换道执行时长 (s)
-P.T_ramp = 15.0;       % 间隙参考渐进时间 (s)
-P.T_prep_max = 40.0;   % 协同准备超时 (s)
-P.dt_batch = 10.0;     % 换道许可分批释放间隔 (s)
+% Maneuver timing
+P.T_lc = 5.0;  % Lane-change duration (s)
+P.T_ramp = 15.0;  % Gap-reference ramp time (s)
+P.T_prep_max = 40.0;  % Preparation timeout (s)
+P.dt_batch = 10.0;  % Batch interval (s)
 
-% ---- 决策层（论文式1-8）----
-P.T_win = 60.0;        % 短时间窗 (s)
-P.N_max = 6;           % 单窗最大换道数
-P.w = [0.30 0.25 0.25 0.20];   % 四因子权重 [w1 w2 w3 w4]
+% Scheduling defaults
+P.T_win = 60.0;  % Scheduling window (s)
+P.N_max = 6;  % Maneuvers per window
+P.w = [0.30 0.25 0.25 0.20];  % Scheduling weights
 
-% ---- 跟驰控制器 ----
+% Following controllers
 P.kp_c = 0.45;  P.kd_c = 0.9;                 % CAV: CACC
-P.kp_pid_x = 0.30; P.kd_pid_x = 0.80;         % PID对照: 纵向
-P.kp_pid_y = 0.10; P.kp_pid_psi = 0.70; P.kd_pid_r = 0.25;  % PID对照: 横向
+P.kp_pid_x = 0.30; P.kd_pid_x = 0.80;  % Longitudinal PID gains
+P.kp_pid_y = 0.10; P.kp_pid_psi = 0.70; P.kd_pid_r = 0.25;  % Lateral PID gains
 P.idm = struct('v0',25.0,'T',1.0,'s0',2.0,'a',1.5,'b',2.0,'delta',4.0);  % HDV
 
-% ---- 场景（初始交通状态）----
-P.n0 = 20;  P.sp0 = 22.0;  P.v0 = 16.0;   % 拥挤车道(车道0)
-P.n1 = 14;  P.sp1 = 30.0;  P.v1 = 18.0;   % 畅通车道(车道1)
+% Initial traffic state
+P.n0 = 20;  P.sp0 = 22.0;  P.v0 = 16.0;  % Closing lane
+P.n1 = 14;  P.sp1 = 30.0;  P.v1 = 18.0;  % Target lane
 P.x0_head = 520.0;  P.x1_head = 700.0;
 
-% ---- 能耗排放（论文式17-18）----
+% Fuel and emission parameters
 P.em = struct('g',9.81,'Cr',0.015,'rho',1.206,'Cd',0.32,'Af',2.2, ...
               'eta',0.30,'LHV',44.0e6,'idle',0.35,'rho_f',737.0, ...
               'co2',3.13,'nox',0.62);

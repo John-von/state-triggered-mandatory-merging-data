@@ -1,3 +1,4 @@
+"""Summarize activation, threshold and timing records."""
 from pathlib import Path
 import csv,json,sys,math
 import numpy as np
@@ -37,4 +38,4 @@ if (A/'runtime_steps.csv').exists():
   xx=[r['milliseconds'] for r in rr if r['vehicles']==n and r['mode']==m]
   out['runtime'].append({'vehicles':n,'mode':m,'steps':len(xx),'mean_ms':float(np.mean(xx)),'p95_ms':float(np.percentile(xx,95)),'maximum_ms':float(max(xx)),'steps_over_100ms':sum(x>100 for x in xx)})
 (A/'summary.json').write_text(json.dumps(out,indent=2),encoding='utf-8')
-print(json.dumps(out,indent=2))
+print('Summarized activation, threshold and timing records.')

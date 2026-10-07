@@ -1,16 +1,6 @@
 function R = simulate_revision(mode, pen, seed, P, logTraj)
-%SIMULATE_MERGE 强制汇入/车道封闭场景仿真主函数
-%   R = simulate_merge(mode, pen, seed, P, logTraj)
-%   mode : 'COOP'    协同（车道1的CAV主动构隙 + LTV-MPC执行）
-%          'ECO'     条件触发的可持续协同（平滑构隙 + 速度恢复）
-%          'PASSIVE' 无协同（间隙接受 + 封闭点排队）
-%   pen  : CAV渗透率 [0,1]；seed : 随机种子；P : params_merge()
-%
-%   车道0在 X_drop 处封闭，所有车必须在此前汇入车道1（不能放弃）。
-%   被动方案仅利用自然间隙，协同方案允许车道1的CAV提前调整目标间隙；
-%   三种方案均在相同任务约束和安全统计口径下评价。
-%   构隙MPC、LTV-MPC、IDM、能耗模型、QP求解器复用基础框架。
-
+%SIMULATE_REVISION Simulate COOP, ECO or PASSIVE mandatory merging.
+% pen is the target-lane CAV fraction; seed identifies a paired realization.
 if nargin < 4 || isempty(P), P = params_merge(); end
 if nargin < 5, logTraj = false; end
 ecoMode = strcmp(mode,'ECO');
@@ -45,19 +35,19 @@ for k = 1:nstep
     active = find(V.lane==0 & V.role~=4);
     commit_id = -1;
     if ~isempty(active)
-        [~,ord] = sort(Xd - V.x(active));   % (Xd-x) 越小越紧迫
+        [~,ord] = sort(Xd - V.x(active));  % Prioritize proximity to the closure
         active = active(ord);
         candidates = active(V.role(active)==1);
         if ~isempty(candidates), commit_id = candidates(1); end
     end
 
-    % ================= 汇入车决策与控制 =================
+    % Merging-vehicle control
     for aa = 1:numel(active)
         i = active(aa);
         v_i = V.vx(i);
         [TP,TF] = lane1_targets(V, i, P);
 
-        % ---- 换道执行阶段 ----
+        % Lane-change execution
         if V.role(i) == 3
             tau = M(i).tau;
             if v_i < P.v_lc_dyn_min && ~M(i).kinematic
@@ -101,7 +91,7 @@ for k = 1:nstep
             continue;
         end
 
-        % ---- 寻隙/准备阶段（role 1）----
+        % Gap search and preparation
         if P.use_predictive_gap
             Pgap = P;
             if ecoMode
@@ -177,18 +167,18 @@ for k = 1:nstep
         end
     end
 
-    % ================= 车道1直行车跟驰 =================
+    % Target-lane following
     for i = 1:n
         if handled(i), continue; end
         if V.lane(i)==1 && V.role(i)~=3
             if V.cav(i), acc(i) = cacc_accel(V,i,P); else, acc(i) = hdv_accel(V,i,P); end
         else
-            acc(i) = seek_accel(V, i, Xd, P, true);   % 兜底
+            acc(i) = seek_accel(V, i, Xd, P, true);  % Fallback following acceleration
         end
         handled(i) = true;
     end
 
-    % 先施加常规冲击度约束，再由安全层保留越过常规制动下限的权限。
+    % Apply nominal jerk limits before safety filtering.
     for i = 1:n
         if acc(i) >= P.a_min
             acc(i) = min(max(acc(i), V.a(i)-P.j_max*P.Ts), V.a(i)+P.j_max*P.Ts);
@@ -198,7 +188,7 @@ for k = 1:nstep
         end
     end
 
-    % ================= 紧急制动安全过滤层 =================
+    % Longitudinal safety filter
     if P.use_safety_filter
         before_filter=acc;
         [acc, nclip] = safety_filter(V, acc, P);
@@ -209,7 +199,7 @@ for k = 1:nstep
         n_safety = n_safety + nclip;
     end
 
-    % ================= 状态推进 =================
+    % State update
     for i = 1:n
         a_cmd = acc(i);
         V.a(i) = a_cmd;
@@ -232,7 +222,7 @@ for k = 1:nstep
             V.vy(i)=0; V.om(i)=0; V.psi(i)=0; V.y(i) = LANE_Y(V.lane(i)+1);
         end
         if V.lane(i)==0 && V.role(i)~=3 && V.x(i) > Xd
-            V.x(i) = Xd;  V.vx(i) = 0;  V.a(i) = 0;   % 未汇入车不得越过封闭点
+            V.x(i) = Xd;  V.vx(i) = 0;  V.a(i) = 0;  % Unmerged vehicles stop at the closure
         end
         if V.role(i)==3 && M(i).tau >= P.T_lc && ...
                 abs(V.y(i)-LANE_Y(2)) <= P.y_merge_tol && ...
@@ -248,14 +238,14 @@ for k = 1:nstep
         end
     end
 
-    % 检查离散更新后的净间距，并按需恢复状态与最小间距约束的一致性。
+    % Apply the optional discrete gap correction when enabled.
     pre_gap_violation_steps = pre_gap_violation_steps + count_gap_violations(V, P);
     if P.use_gap_correction
         [V, nfix] = enforce_min_gap(V, P);
         n_gap_corrections = n_gap_corrections + nfix;
     end
 
-    % ================= 统计 =================
+    % Accumulate metrics
     recV(k,:)=V.vx; recA(k,:)=V.a; recX(k,:)=V.x; recLane(k,:)=V.lane;
     n_brake = n_brake + sum(V.a < -1.0);
     stop_steps = stop_steps + sum(V.vx < 1.0);
@@ -273,7 +263,7 @@ for k = 1:nstep
     step_seconds(k)=toc(step_clock);
 end
 
-% ================= 指标计算 =================
+% Performance metrics
 n0 = sum(V.lane0_init);
 n_merged = sum(V.lane==1 & V.lane0_init);
 comp_rate = 100 * n_merged / max(n0,1);
@@ -282,7 +272,7 @@ fg  = fuel_rate(recV, recA, P) * P.Ts;
 fuel_g = sum(fg(:));
 fuel_L = fuel_g / P.em.rho_f;
 
-% 旧字段作为兼容别名保留，便于读取此前已经生成的结果。
+% Retain aliases used by the archived records.
 R = struct('mode',mode,'pen',pen,'seed',seed, ...
     'n_merge_total', n0, 'n_merged', n_merged, 'comp_rate', comp_rate, ...
     'fuel_L', fuel_L, ...
@@ -304,9 +294,7 @@ R = struct('mode',mode,'pen',pen,'seed',seed, ...
     'traj', traj, 'recV', recV, 'recA', recA, 'recX', recX, 'recLane', recLane);
 end
 
-%% ==================================================================
-%  强制汇入专用局部函数
-%% ==================================================================
+% Local functions
 function V = init_merge(P, pen, seed, LANE_Y)
 rng(seed, 'twister');
 n = P.n0 + P.n1;
@@ -326,9 +314,7 @@ V.vy=zeros(1,n); V.psi=zeros(1,n); V.om=zeros(1,n); V.a=zeros(1,n);
 V.role = zeros(1,n);
 V.role(V.lane==0) = 1;
 V.lane0_init = (V.lane==0);
-% 待汇入车辆均为可控车辆；pen 仅表示目标车道 CAV 渗透率。
-% 这样 HDV 只作为不可控的目标车道邻车进入外部轨迹预测，避免以
-% LTV-MPC 直接控制被标记为 HDV 的汇入车辆。
+% All merging vehicles are controlled; pen applies to the target lane.
 V.cav = false(1,n);
 V.cav(1:P.n0) = true;
 target = P.n0 + (1:P.n1);
@@ -337,7 +323,7 @@ idx = target(randperm(P.n1));
 V.cav(idx(1:ncav)) = true;
 end
 
-% ---------------- 车道1目标前后车（按汇入车纵向位置）----------------
+% Identify target-lane neighbors
 function [TP,TF] = lane1_targets(V, i, ~)
 TP = -1; TF = -1; dfm = inf; drm = inf;
 for j = 1:numel(V.x)
@@ -348,8 +334,8 @@ for j = 1:numel(V.x)
 end
 end
 
-% ---------------- 预测性间隙判据 ----------------
-%  即使前后车维持当前逼近速度，整个机动期(T_lc)也不重叠，方允许切入
+% Predictive gap admission
+% Evaluate front and rear closing-gap margins over the maneuver horizon.
 function ok = predictive_gap_ok(V, i, TP, TF, P)
 v_i = V.vx(i);  gf_ok = true;  gr_ok = true;
 if TP > 0
@@ -367,7 +353,7 @@ end
 ok = gf_ok && gr_ok;
 end
 
-% ---------------- 寻隙纵向加速度（跟车道0前车 + 可选封闭点障碍）----------------
+% Gap-search acceleration
 function a = seek_accel(V, i, Xd, P, useDrop)
 v = V.vx(i);
 [jf0, gf0] = lane0_pred(V, i, P);
@@ -390,7 +376,7 @@ end
 if jf>0, gf = gf - P.Lc; end
 end
 
-% ---------------- IDM 加速度（给定前车间隙与速度）----------------
+% IDM acceleration
 function a = idm_pair(v, vdes, gap, v_lead, P)
 if isinf(gap)
     a = 0.6*(vdes - v);  return;
@@ -400,7 +386,7 @@ ss = P.idm.s0 + max(0, v*P.idm.T + v*dv/(2*sqrt(P.idm.a*P.idm.b)));
 a = P.idm.a*(1 - (v/max(vdes,1))^P.idm.delta - (ss/s)^2);
 end
 
-% ---------------- 协同构隙：单CAV让行车开隙（CACC增广目标）----------------
+% Single-CAV gap creation
 function a = open_gap_cacc(V, jTF, jTP, ~, P)
 v = V.vx(jTF);
 g_open = P.g_open_fac * 2*(P.d0 + P.tau_h*v);
@@ -438,7 +424,7 @@ Pc.kp_c = P.eco_kp_gap;
 Pc.kd_c = P.eco_kd_gap;
 end
 
-% ---------------- 协同构隙：多车纵向 MPC（复用 gap_mpc）----------------
+% Multi-vehicle gap-creation MPC
 function a_grp = coop_gap_control(V, iHC, TP, TF, grp, t, P)
 nc = numel(grp);  loc = zeros(1,numel(V.x)); loc(grp)=1:nc;  nn=3*nc;
 tvec = (0:P.Np_g-1)'*P.Ts;
@@ -509,10 +495,8 @@ end
 if jf>0, gf=gf-P.Lc; end
 end
 
-% ---------------- 控制障碍型纵向安全层 ----------------
-%   对每辆车按控制障碍函数上界裁剪加速度，保证与前车净间隙不小于
-%   d0+tau_s*v，从而无重叠。换道车在机动全程计入目标车道，使其后车(TF)
-%   在整个过程中让行；紧急时可越过常规下限至 a_emg。
+% Barrier-based acceleration bound
+% Apply the barrier-based acceleration bound, limited by a_emg.
 function [acc, nclip] = safety_filter(V, acc, P)
 n = numel(V.x);
 tau_s = P.tau_safe;  alpha = 1.0;
@@ -521,8 +505,8 @@ for i = 1:n
     [jf, g] = front_eff(V, i, P);
     if jf<=0, continue; end
     vi = V.vx(i);  vj = V.vx(jf);
-    h = g - tau_s*vi - P.d0 - P.safety_buffer; % 障碍函数 h>=0 即安全
-    a_cap = ((vj - vi) + alpha*h) / tau_s;   % 保持 dh/dt>=-alpha*h 的加速度上界
+    h = g - tau_s*vi - P.d0 - P.safety_buffer;  % Spacing barrier
+    a_cap = ((vj - vi) + alpha*h) / tau_s;  % Acceleration bound for dh/dt >= -alpha*h
     if acc(i) > a_cap
         acc(i) = a_cap;
         nclip = nclip + 1;
@@ -532,7 +516,7 @@ end
 end
 
 function [jf, g] = front_eff(V, i, P)
-% 按实际横向位置判定前车：换道车横跨车道时对相邻两车道均可见
+% A straddling vehicle is visible from both adjacent lanes.
 n = numel(V.x); jf = -1; best = inf;
 for j = 1:n
     if j==i, continue; end
@@ -543,9 +527,8 @@ end
 g = best - P.Lc;
 end
 
-% ---------------- 离散状态的最小间距一致性校正 ----------------
-%   控制障碍层负责生成安全控制量；本步骤只处理状态离散更新后
-%   超出最小间距边界的残差，不参与控制量优化。
+% Optional discrete gap correction
+% Correct discrete positions only when the optional correction is enabled.
 function [V, nfix] = enforce_min_gap(V, P)
 LANE_Y = [P.lane_w/2, P.lane_w*1.5];
 dmin = P.Lc + P.g_gap_correction;
@@ -566,7 +549,7 @@ end
 end
 
 function n = count_gap_violations(V, P)
-% 统计一致性校正前净间距小于零的样本数。
+% Count negative-gap samples before optional position correction.
 n = 0;
 for i = 1:numel(V.x)
     [jf, gf] = neighbors(V, i, P);
@@ -574,9 +557,7 @@ for i = 1:numel(V.x)
 end
 end
 
-%% ==================================================================
-%  以下控制层函数复用基础 simulate.m（构隙MPC/LTV-MPC/动力学/能耗/QP）
-%% ==================================================================
+% MPC, dynamics, fuel calculation and quadratic-program solver.
 function [jf, gf, jr, gr] = neighbors(V, i, P)
 jf = -1; gf = inf; jr = -1; gr = inf;
 for j = 1:numel(V.x)
@@ -790,7 +771,7 @@ end
 function U = qp_solve(H, f, A, b)
 nnH = size(H,1);
 if any(~isfinite(H(:))) || any(~isfinite(f(:)))
-    U = zeros(nnH,1); return;          % 数值异常保护
+    U = zeros(nnH,1); return;  % Numerical fallback
 end
 H = 0.5*(H + H');
 reg = 1e-8;  L = [];
@@ -798,7 +779,7 @@ while true
     [L, p] = chol(H + reg*eye(nnH), 'lower');
     if p == 0, break; end
     reg = reg*10;
-    if reg > 1e6, U = -f./max(diag(H),1e-6); return; end   % 回退
+    if reg > 1e6, U = -f./max(diag(H),1e-6); return; end  % Diagonal fallback
 end
 Hi_f = L' \ (L \ f);
 U = -Hi_f;
