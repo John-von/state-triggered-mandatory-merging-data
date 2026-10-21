@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite the associated article and this data release."
+title: "Source Code and Data for State-Triggered Cooperative Mandatory Merging at Temporary Lane Closures in Mixed Traffic Flow"
+type: dataset
+version: 3.0.2
+date-released: 2026-10-21
+repository-code: "https://github.com/John-von/state-triggered-mandatory-merging-data"
+url: "https://github.com/John-von/state-triggered-mandatory-merging-data/releases/tag/v3.0.2"
+authors:
+  - family-names: Yu
+    given-names: Jie
+  - family-names: Chen
+    given-names: Tao
+    email: cc07311994@163.com
+  - family-names: Wen
+    given-names: Qiang
+  - family-names: Bai
+    given-names: Mingyuan
+keywords:
+  - mixed traffic flow
+  - mandatory merging
+  - temporary lane closure
+  - connected and automated vehicles
+  - traffic safety
+  - operational sustainability
